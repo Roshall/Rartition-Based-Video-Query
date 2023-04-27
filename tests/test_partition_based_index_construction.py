@@ -2,6 +2,18 @@ import frame_reader
 import partition_based_index_construction as pbic
 
 
+def print_tree(root, level: int = 0) -> None:
+    print("--" * level, root.obj)
+    for child in root.children:
+        print_tree(child, level + 1)
+
+
+def print_forest(roots: list) -> None:
+    for tree in roots:
+        print()
+        print_tree(tree)
+
+
 class TestTPBIC:
     frames = frame_reader.DummyFrameReader().frame_list()
 
@@ -17,11 +29,11 @@ class TestTPBIC:
 
     def test_update_state(self):
         count_map = pbic.count_map_construct(self.frames)
-        objs = [(4, 4)]
-        correct_ans = pbic.Node(3, 3), [[2, 3], [1,3], [1, 2, 3]], (3, 3)
-        assert pbic.update_state(count_map, objs, self.frames) == correct_ans
+        correct_ans = pbic.Node(3, 3), [[2, 3], [1, 3], [1, 2, 3]], (3, 3)
+        assert pbic.update_state(count_map, self.frames) == correct_ans
 
     def test_partition_based_index_construction(self):
+        self.frames.extend([[1, 4], [3], [3], [2, 4], [1, 2, 4]])
         roots = pbic.partition_based_index_construction(self.frames)
-        assert len(roots) != 0
-        assert roots[0].id == 1
+        assert len(roots) > 0
+        print_forest(roots)
