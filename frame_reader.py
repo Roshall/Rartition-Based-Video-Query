@@ -8,5 +8,10 @@ class DummyFrameReader(FrameReader):
     def frame_list(self):
         f = [[2, 3],
              [1, 3],
-             [1, 2, 3]]
+             [1, 2, 3],
+             [1, 4],
+             [3],
+             [3],
+             [2, 4],
+             [1, 2, 4]]
         return f

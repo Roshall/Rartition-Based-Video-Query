@@ -56,10 +56,10 @@ class ScoreOrderPrefixTree:
             self.__build_next(node, filter_frames)
         self.all_count_map.pop()
 
-    def construct(self, frames: list):
+    def build(self, frames: list):
         frames = copy.deepcopy(frames)  # since we will modify it later
         count_map = flatten_and_count(frames)
-        self.objs.extend(count_map.keys())
+        self.objs.extend(sorted(count_map.keys()))
         self.all_count_map.append(count_map)
         while len(count_map) > 0:
             node, filtered_frames, _ = update_state(count_map, frames)
