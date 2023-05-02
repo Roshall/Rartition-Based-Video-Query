@@ -212,6 +212,7 @@ class BitMap(object):
 
         for i in range(len(self.bitmap)):
             self.bitmap[i] &= other.bitmap[i]
+        return self
 
     def __ior__(self, other):
         if len(self.bitmap) != len(other.bitmap):
@@ -219,6 +220,7 @@ class BitMap(object):
 
         for i in range(len(self.bitmap)):
             self.bitmap[i] |= other.bitmap[i]
+        return self
 
     def tohexstring(self):
         """
