@@ -1,9 +1,10 @@
 import frame_reader
 import score_ordered_prefix_tree as sopt
+from utils import Frame
 
 
 def print_tree(root, level: int = 0) -> None:
-    print("--" * level, root.obj)
+    print("--" * level, root.obj.id, root.obj.my_frames)
     for child in root.children:
         print_tree(child, level + 1)
 
@@ -14,12 +15,14 @@ def print_forest(roots: list) -> None:
         print_tree(tree)
 
 
-class TestTPBIC:
-    frames = frame_reader.DummyFrameReader().frame_list()
-
-    def test_partition_based_index_construction(self):
+class TestSopt:
+    def test_build(self):
+        raw_frames = frame_reader.DummyFrameReader().frame_list()
+        frames = []
+        for i, obj_id_list in enumerate(raw_frames):
+            frames.append(Frame(i, obj_id_list))
         tree_index = sopt.ScoreOrderPrefixTree()
-        tree_index.build(self.frames)
+        tree_index.build(frames)
         trees = tree_index.trees
         assert len(trees) > 0
         print_forest(trees)
