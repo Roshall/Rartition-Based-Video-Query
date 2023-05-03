@@ -208,7 +208,7 @@ class BitMap(object):
 
     def __iand__(self, other):
         if len(self.bitmap) != len(other.bitmap):
-            raise ValueError("Tow bitmap have different size.")
+            raise ValueError("Tow bitmaps have different size.")
 
         for i in range(len(self.bitmap)):
             self.bitmap[i] &= other.bitmap[i]
@@ -216,7 +216,7 @@ class BitMap(object):
 
     def __ior__(self, other):
         if len(self.bitmap) != len(other.bitmap):
-            raise ValueError("Tow bitmap have different size.")
+            raise ValueError("Tow bitmaps have different size.")
 
         for i in range(len(self.bitmap)):
             self.bitmap[i] |= other.bitmap[i]
