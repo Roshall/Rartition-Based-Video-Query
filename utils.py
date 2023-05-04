@@ -1,3 +1,4 @@
+from itertools import chain
 from typing import Callable, Any, Iterable
 
 
@@ -11,8 +12,22 @@ def breath_first_search(roots, visit: Callable[[Any], None]) -> None:
         nodes_queue.extend(node.children)
 
 
+def build_pos_map(obj_ids):
+    obj_pos_map = {}
+    for i, obj in enumerate(obj_ids):
+        obj_pos_map[obj] = i
+    return obj_pos_map
+
+
+def add_id_for(frames):
+    frames_ids = []
+    for i, obj_id_list in enumerate(frames):
+        frames_ids.append(Frame(i, obj_id_list))
+    return frames_ids
+
+
 class Object:
-    def __init__(self, oid,  in_frames: list):
+    def __init__(self, oid, in_frames: list):
         self.id = oid
         self.my_frames = in_frames
 
@@ -21,9 +36,21 @@ class Object:
 
 
 class Frame(list):
+    """
+    Basically a list of object ids, plus the id of the frame.
+    """
     def __init__(self, fid, object_ids):
         self.fid = fid
         super().__init__(object_ids)
+
+
+def sort_all_objs_in_frames(frames: list[Frame]):
+    """
+    sort all objects in frames and deduplicate object
+    :param frames: frames
+    :return: sorted distinct objects list
+    """
+    return sorted(set(chain(*frames)))
 
 
 class ObjectCounter(dict):
@@ -31,6 +58,7 @@ class ObjectCounter(dict):
     essentially, This class stores all the frames that each object is in.
     and object's score is simply # of frames
     """
+
     def __init__(self, frames: Iterable = None):
         self.max = None
         object_map = {}

@@ -12,9 +12,6 @@ class Node:
     def add_child(self, node):
         self.children.append(node)
 
-    def __eq__(self, other):
-        return self.obj == other.obj and self.children == other.children
-
 
 def filter_by_obj(frames: Iterable, obj_id):
     new_list = []
@@ -36,7 +33,6 @@ def update_state(count_map: ObjectCounter, frames):
 
 class ScoreOrderPrefixTree:
     def __init__(self):
-        self.obj_ids = []
         self.trees = []
         self.all_count_map = []
 
@@ -59,7 +55,6 @@ class ScoreOrderPrefixTree:
     def build(self, frames: list):
         frames = copy.deepcopy(frames)  # since we will modify it later
         count_map = ObjectCounter(frames)
-        self.obj_ids.extend(sorted(count_map.keys()))
         self.all_count_map.append(count_map)
         while len(count_map) > 0:
             node, filtered_frames, _ = update_state(count_map, frames)

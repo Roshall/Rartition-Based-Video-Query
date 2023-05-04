@@ -31,15 +31,13 @@ def visit_node4faster_index(obj_pos_map, obj_map, maximum_bits):
 
 
 class FasterIndex:
-    def __init__(self, obj_ids: list):
+    def __init__(self, obj_ids: list, obj_pos_map):
         self.maximum_bits = len(obj_ids)
         self.obj_ids = obj_ids
         self.obj_map = {}
-        self.obj_pos_map = {}
+        self.obj_pos_map = obj_pos_map
         self.sorted_nodes = None
-
-        for i, obj in enumerate(obj_ids):
-            self.obj_pos_map[obj] = i
+        for obj in obj_ids:
             self.obj_map[obj] = []
 
     def build(self, sopt_forest: list):

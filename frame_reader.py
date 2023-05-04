@@ -1,4 +1,4 @@
-from utils import Frame
+from utils import add_id_for
 
 
 class FrameReader:
@@ -19,8 +19,5 @@ class DummyFrameReader(FrameReader):
              [1, 2, 4]]
 
         if has_id:
-            frames = []
-            for i, obj_id_list in enumerate(f):
-                frames.append(Frame(i, obj_id_list))
-            f = frames
+            f = add_id_for(f)
         return f
