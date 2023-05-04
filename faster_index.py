@@ -49,11 +49,17 @@ class FasterIndex:
         self.__sort_node()
 
     def __sort_node(self):
+        """
+        node are sorted according to the bitmap cardinality in descending order,
+        breaking ties using the score. Therefore, the node with maximal score
+        will be the last one.
+        :return: sorted node list
+        """
         nodes = []
         for _, v in self.obj_map.items():
             nodes.extend(v)
 
-        nodes.sort(key=lambda n: (len(n.obj.bitmap.nonzero()), n.obj.score()))
+        nodes.sort(key=lambda n: (-len(n.obj.bitmap.nonzero()), n.obj.score()))
         self.sorted_nodes = nodes
 
     def whole_seq_of(self, node):
