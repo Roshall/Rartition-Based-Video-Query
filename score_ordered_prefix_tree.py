@@ -36,7 +36,7 @@ def update_state(count_map: ObjectCounter, frames):
 
 class ScoreOrderPrefixTree:
     def __init__(self):
-        self.objs = []
+        self.obj_ids = []
         self.trees = []
         self.all_count_map = []
 
@@ -59,7 +59,7 @@ class ScoreOrderPrefixTree:
     def build(self, frames: list):
         frames = copy.deepcopy(frames)  # since we will modify it later
         count_map = ObjectCounter(frames)
-        self.objs.extend(sorted(count_map.keys()))
+        self.obj_ids.extend(sorted(count_map.keys()))
         self.all_count_map.append(count_map)
         while len(count_map) > 0:
             node, filtered_frames, _ = update_state(count_map, frames)

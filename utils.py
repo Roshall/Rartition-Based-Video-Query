@@ -27,6 +27,10 @@ class Frame(list):
 
 
 class ObjectCounter(dict):
+    """
+    essentially, This class stores all the frames that each object is in.
+    and object's score is simply # of frames
+    """
     def __init__(self, frames: Iterable = None):
         self.max = None
         object_map = {}

@@ -17,10 +17,7 @@ def print_forest(roots: list) -> None:
 
 class TestSopt:
     def test_build(self):
-        raw_frames = frame_reader.DummyFrameReader().frame_list()
-        frames = []
-        for i, obj_id_list in enumerate(raw_frames):
-            frames.append(Frame(i, obj_id_list))
+        frames = frame_reader.DummyFrameReader().frame_list()
         tree_index = sopt.ScoreOrderPrefixTree()
         tree_index.build(frames)
         trees = tree_index.trees
