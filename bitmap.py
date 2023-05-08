@@ -30,12 +30,13 @@ class BitMap(object):
         """
         Create a BitMap
         """
-        self.bits = maximum
-        nbytes = (maximum + 7) // 8
-        bit_value = 0xFF if preset else 0x00
         if bitmap:
             self.bitmap = bytearray(bitmap)
+            self.bits = len(self.bitmap) * 8
         else:
+            self.bits = maximum
+            nbytes = (maximum + 7) // 8
+            bit_value = 0xFF if preset else 0x00
             self.bitmap = array.array('B', [bit_value for _ in range(nbytes)])
 
     def __del__(self):
@@ -207,7 +208,7 @@ class BitMap(object):
                 self.reset(value)
 
     def __iand__(self, other):
-        if len(self.bitmap) != len(other.bitmap):
+        if self.size() != other.size():
             raise ValueError("Tow bitmaps have different size.")
 
         for i in range(len(self.bitmap)):
@@ -215,12 +216,20 @@ class BitMap(object):
         return self
 
     def __ior__(self, other):
-        if len(self.bitmap) != len(other.bitmap):
+        if self.size() != other.size():
             raise ValueError("Tow bitmaps have different size.")
 
         for i in range(len(self.bitmap)):
             self.bitmap[i] |= other.bitmap[i]
         return self
+
+    def __and__(self, other):
+        if self.size() != other.size():
+            raise ValueError("Tow bitmaps have different size.")
+        bm = bytearray(self.bitmap)
+        for i in range(len(bm)):
+            bm &= other.bitmap
+        return bm
 
     def tohexstring(self):
         """
