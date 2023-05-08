@@ -18,20 +18,28 @@ def visit_node4faster_index(obj_pos_map, obj_map, maximum_bits):
         # set the node's object's corresponding pos to 1 in the bitmap
         obj = node.obj
         pos = obj_pos_map[obj.id]
-        obj.bitmap.set(pos)
+        node.bitmap.set(pos)
         # add the node to the hash index
-        obj_map[obj.id].append(node)
+        fi_node = FasterIndex.Node(node.bitmap, node.obj.my_frames)
+        obj_map[obj.id].append(fi_node)
         # set the bitmaps for all his children
         # not sure if here is the best place to set them
         for child in node.children:
-            child.obj.bitmap = BitMap(maximum_bits)
-            child.obj.bitmap |= obj.bitmap
+            child.bitmap = BitMap(maximum_bits)
+            child.bitmap |= node.bitmap
+        del node.bitmap
 
     return visit_node
 
 
 class FasterIndex:
-    def __init__(self, obj_ids: list, obj_pos_map):
+    class Node:
+        def __init__(self, bitmap, my_frames: list):
+            self.bitmap = bitmap
+            self.my_frames = my_frames
+            self.score = len(my_frames)
+
+    def __init__(self, obj_ids: list, obj_pos_map, sopt_forest):
         self.maximum_bits = len(obj_ids)
         self.obj_ids = obj_ids
         self.obj_map = {}
@@ -39,12 +47,13 @@ class FasterIndex:
         self.sorted_nodes = None
         for obj in obj_ids:
             self.obj_map[obj] = []
+        self.__build(sopt_forest)
 
-    def build(self, sopt_forest: list):
+    def __build(self, sopt_forest: list):
         """ building hash and bitmap index for each tree in the SOPT forest
         """
         for tree in sopt_forest:
-            tree.obj.bitmap = BitMap(self.maximum_bits)
+            tree.bitmap = BitMap(self.maximum_bits)
             bfs(tree, visit_node4faster_index(self.obj_pos_map, self.obj_map, self.maximum_bits))
         self.__sort_node()
 
@@ -59,16 +68,11 @@ class FasterIndex:
         for _, v in self.obj_map.items():
             nodes.extend(v)
 
-        nodes.sort(key=lambda n: (-len(n.obj.bitmap.nonzero()), n.obj.score()))
+        nodes.sort(key=lambda n: (-n.bitmap.count(), n.score))
         self.sorted_nodes = nodes
 
-    def whole_seq_of(self, node):
-        """
-        get the whole sequence that a node represents
-        :param node: sopt tree node
-        :return: seq list
-        """
-        seq = []
-        for pos in node.obj.bitmap.nonzero():
-            seq.append(self.obj_ids[pos])
-        return seq
+    def get(self, obj_id):
+        if (exam := self.obj_map.get(obj_id)) is None:
+            return iter([])
+        else:
+            return iter(exam)

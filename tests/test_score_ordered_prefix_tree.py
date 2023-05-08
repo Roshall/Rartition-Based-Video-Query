@@ -18,8 +18,7 @@ def print_forest(roots: list) -> None:
 class TestSopt:
     def test_build(self):
         frames = frame_reader.DummyFrameReader().frame_list()
-        tree_index = sopt.ScoreOrderPrefixTree()
-        tree_index.build(frames)
+        tree_index = sopt.ScoreOrderPrefixTree(frames)
         trees = tree_index.trees
         assert len(trees) > 0
         print_forest(trees)

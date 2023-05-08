@@ -9,13 +9,11 @@ class TestFastIndex:
         frames = Dr().frame_list()
         obj_ids = sort_all_objs_in_frames(frames)
         pos_map = build_pos_map(obj_ids)
-        sopt_forest = Sopt()
-        sopt_forest.build(frames)
+        sopt_forest = Sopt(frames)
         trees = sopt_forest.trees
-        fi = FasterIndex(obj_ids, pos_map)
-        fi.build(trees)
+        fi = FasterIndex(obj_ids, pos_map, trees)
         for obj_id, members in fi.obj_map.items():
             print(obj_id)
             for item in members:
-                print(item.obj.bitmap, item.obj.my_frames, end=' ;')
+                print(item.bitmap, item.my_frames, end=' ;')
             print()
