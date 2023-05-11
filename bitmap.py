@@ -229,7 +229,7 @@ class BitMap(object):
         bm = bytearray(self.bitmap)
         for i in range(len(bm)):
             bm &= other.bitmap
-        return bm
+        return BitMap(bitmap=bm)
 
     def tohexstring(self):
         """
