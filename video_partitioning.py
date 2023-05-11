@@ -1,7 +1,6 @@
 import heapq
 from itertools import chain
 from math import floor
-from typing import Callable
 
 from bitmap import BitMap
 from faster_index import FasterIndex as Fi
@@ -11,22 +10,22 @@ from utils import build_pos_map as build_pm
 
 
 class Partition:
-    def __init__(self, pid: int, frames, start_p):
+    def __init__(self, pid: int, frames, start_p, end_p):
         self.id = pid
         self.obj_ids = sort_obj(frames)
         self.obj_pos_map = build_pm(self.obj_ids)
+        self.interval = start_p, end_p
         self.frames = add_id_for(frames, start_p)
         self.hash_index = None
         self.label_index = None
-        self.query_pointer = None
+        self.query_pointer = -1
 
-    def build_fast_index(self, label_filter: Callable[[list], list]):
+    def build_fast_index(self):
         """
         build index for a label
-        :param label_filter: filter function that filters objects according to the label
         :return: a list of frames containing passed-by objects
         """
-        sopt_forest = Sopt(label_filter(self.frames))
+        sopt_forest = Sopt(self.frames)
         self.hash_index = Fi(self.obj_ids, self.obj_pos_map, sopt_forest.trees)
         del sopt_forest
 
@@ -81,7 +80,7 @@ class Partition:
         self.query_pointer -= 1
 
     def interval(self):
-        return self.frames[0].fid, self.frames[-1].fid
+        return self.interval
 
     def __lt__(self, other):
         """
@@ -101,12 +100,12 @@ class VideoPartition(list):
         partitions = super()
         counter = 0
         for i in range(0, len(self.frames), partition_size):
-            partitions.append(Partition(counter, self.frames[i:i + partition_size], i))
+            partitions.append(Partition(counter, (f for f in self.frames[i:i + partition_size]), i, i+partition_size-1))
             counter += 1
 
-    def build_hash_index(self, label_filter: Callable[[list], list]):
+    def build_hash_index(self):
         for portion in super():
-            portion.build_fast_index(label_filter)
+            portion.build_fast_index()
 
     def build_label_index(self, indexed_labels, obj_labels):
         for portion in super():
@@ -131,7 +130,7 @@ class Group(list):
                 # FIXME(lu): not max_score, but max estimate score (according to the paper),
                 #  which take condition into consideration
                 #  albeit, maybe it is the right way to just return max_score
-                windows_max_score.append(sum(map(lambda p: p.max_score(), partitions[i:i+self.w_size])))
+                windows_max_score.append(sum(map(lambda p: p.max_score(), (p for p in partitions[i:i+self.w_size]))))
             self.est_score = max(windows_max_score)
 
         return self.est_score
@@ -158,7 +157,7 @@ class Group(list):
         return self.estimate_score() > other.estimate_score()
 
     def __eq__(self, other):
-        return self.estimate_score() > other.estimate_score()
+        return self.estimate_score() == other.estimate_score()
 
 
 class PartitionGroup(list):

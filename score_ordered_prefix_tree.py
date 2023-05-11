@@ -33,7 +33,7 @@ class ScoreOrderPrefixTree:
         def score(self):
             return self.obj.score()
 
-    def __init__(self, frames):
+    def __init__(self, frames: Iterable):
         self.trees = []
         self.all_count_map = []
         self.__build(frames)
@@ -54,10 +54,10 @@ class ScoreOrderPrefixTree:
             self.__build_next(node, filter_frames)
         self.all_count_map.pop()
 
-    def __build(self, frames: list):
+    def __build(self, frames: Iterable):
         """
         build all sore order prefix trees for a list of frames
-        :param frames: the list of the frames. Warning!! the list will be modified
+        :param frames: Iterable object that contains all the frames
         :return: None
         """
         count_map = ObjectCounter(frames)

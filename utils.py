@@ -22,10 +22,8 @@ def build_pos_map(obj_ids):
 
 
 def add_id_for(frames, start_p):
-    frames_ids = []
     for i, obj_id_list in enumerate(frames, start_p):
-        frames_ids.append(Frame(i, obj_id_list))
-    return frames_ids
+        yield Frame(i, obj_id_list)
 
 
 def bitmap_of(obj_ids: Iterable, all_obj_num, obj_ids_map):
