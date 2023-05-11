@@ -1,6 +1,5 @@
 import frame_reader
 import score_ordered_prefix_tree as sopt
-from utils import Frame
 
 
 def print_tree(root, level: int = 0) -> None:

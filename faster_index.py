@@ -33,6 +33,9 @@ def visit_node4faster_index(obj_pos_map, obj_map, maximum_bits):
 
 
 class FasterIndex:
+    """
+    hash index plus bitmaps
+    """
     class Node:
         def __init__(self, bitmap, my_frames: list):
             self.bitmap = bitmap
@@ -40,21 +43,19 @@ class FasterIndex:
             self.score = len(my_frames)
 
     def __init__(self, obj_ids: list, obj_pos_map, sopt_forest):
-        self.maximum_bits = len(obj_ids)
-        self.obj_ids = obj_ids
         self.obj_map = {}
-        self.obj_pos_map = obj_pos_map
         self.sorted_nodes = None
         for obj in obj_ids:
             self.obj_map[obj] = []
-        self.__build(sopt_forest)
+        maximum_bits = len(obj_ids)
+        self.__build(sopt_forest, obj_pos_map, maximum_bits)
 
-    def __build(self, sopt_forest: list):
+    def __build(self, sopt_forest: list, obj_pos_map, maximum_bits):
         """ building hash and bitmap index for each tree in the SOPT forest
         """
         for tree in sopt_forest:
-            tree.bitmap = BitMap(self.maximum_bits)
-            bfs(tree, visit_node4faster_index(self.obj_pos_map, self.obj_map, self.maximum_bits))
+            tree.bitmap = BitMap(maximum_bits)
+            bfs(tree, visit_node4faster_index(self.obj_map, obj_pos_map, maximum_bits))
         self.__sort_node()
 
     def __sort_node(self):
@@ -73,6 +74,6 @@ class FasterIndex:
 
     def get(self, obj_id):
         if (exam := self.obj_map.get(obj_id)) is None:
-            return iter([])
+            return None
         else:
             return iter(exam)
