@@ -1,3 +1,5 @@
+from copy import copy
+
 from frame_reader import DummyFrameReader as Dr
 from score_ordered_prefix_tree import ScoreOrderPrefixTree as Sopt
 from faster_index import FasterIndex

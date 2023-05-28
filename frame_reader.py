@@ -19,5 +19,5 @@ class DummyFrameReader(FrameReader):
              [1, 2, 4]]
 
         if has_id:
-            f = add_id_for(f)
+            f = add_id_for(f, 0)
         return f

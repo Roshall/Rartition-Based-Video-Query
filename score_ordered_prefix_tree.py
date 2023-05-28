@@ -20,6 +20,17 @@ def update_state(count_map: ObjectCounter, frames):
     filtered_frames = filter_by_obj(frames, oid)
     return node, filtered_frames
 
+def print_tree(root, level: int = 0) -> None:
+    print("--" * level, root.obj.id, root.obj.my_frames)
+    for child in root.children:
+        print_tree(child, level + 1)
+
+
+def print_forest(roots: list) -> None:
+    for tree in roots:
+        print()
+        print_tree(tree)
+
 
 class ScoreOrderPrefixTree:
     class Node:
@@ -60,6 +71,7 @@ class ScoreOrderPrefixTree:
         :param frames: Iterable object that contains all the frames
         :return: None
         """
+        frames = list(frames)
         count_map = ObjectCounter(frames)
         self.all_count_map.append(count_map)
         while len(count_map) > 0:
@@ -67,3 +79,6 @@ class ScoreOrderPrefixTree:
             self.__build_next(node, filtered_frames)
             self.trees.append(node)
             count_map = ObjectCounter(frames)  # this line is different from the paper
+
+    def print(self):
+        print_forest(self.trees)

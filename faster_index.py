@@ -55,7 +55,7 @@ class FasterIndex:
         """
         for tree in sopt_forest:
             tree.bitmap = BitMap(maximum_bits)
-            bfs(tree, visit_node4faster_index(self.obj_map, obj_pos_map, maximum_bits))
+            bfs(tree, visit_node4faster_index(obj_pos_map, self.obj_map, maximum_bits))
         self.__sort_node()
 
     def __sort_node(self):

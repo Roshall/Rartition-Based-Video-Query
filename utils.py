@@ -22,9 +22,10 @@ def build_pos_map(obj_ids):
 
 
 def add_id_for(frames, start_p):
+    new_f = []
     for i, obj_id_list in enumerate(frames, start_p):
-        yield Frame(i, obj_id_list)
-
+        new_f.append(Frame(i, obj_id_list))
+    return new_f
 
 def bitmap_of(obj_ids: Iterable, all_obj_num, obj_ids_map):
     bitmap = BitMap(all_obj_num)
@@ -71,7 +72,7 @@ class ObjectCounter(dict):
         object_map = {}
         for frame in frames:
             for obj_id in frame:
-                if obj_id in object_map:
+                if obj_id not in object_map:
                     object_map[obj_id] = ObjectWithFrames(obj_id, [frame.fid])
                 else:
                     object_map[obj_id].my_frames.append(frame.fid)

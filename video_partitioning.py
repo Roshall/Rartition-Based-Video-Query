@@ -30,6 +30,12 @@ class Partition:
         del sopt_forest
 
     def build_labels_index(self, indexed_labels, obj_labels):
+        """
+
+        :param indexed_labels: labels to build indexes
+        :param obj_labels: object with label
+        :return: None
+        """
         bm_bit = len(self.obj_ids)
         label_index = {indexed_l: BitMap(bm_bit) for indexed_l in indexed_labels}
         for obj_id in self.obj_ids:
