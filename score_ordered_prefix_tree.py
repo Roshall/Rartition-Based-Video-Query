@@ -20,6 +20,7 @@ def update_state(count_map: ObjectCounter, frames):
     filtered_frames = filter_by_obj(frames, oid)
     return node, filtered_frames
 
+
 def print_tree(root, level: int = 0) -> None:
     print("--" * level, root.obj.id, root.obj.my_frames)
     for child in root.children:

@@ -68,16 +68,13 @@ class ObjectCounter(dict):
     """
 
     def __init__(self, frames: Iterable = None):
-        self.max = None
-        object_map = {}
+        super().__init__()
         for frame in frames:
             for obj_id in frame:
-                if obj_id not in object_map:
-                    object_map[obj_id] = ObjectWithFrames(obj_id, [frame.fid])
+                if obj_id not in self:
+                    self[obj_id] = ObjectWithFrames(obj_id, [frame.fid])
                 else:
-                    object_map[obj_id].my_frames.append(frame.fid)
-
-        super().__init__(object_map)
+                    self[obj_id].my_frames.append(frame.fid)
 
     def most_common(self):
         return max(super().items(), key=lambda item: item[1].score())[1]

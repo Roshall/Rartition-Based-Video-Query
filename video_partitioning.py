@@ -103,18 +103,17 @@ class VideoPartition(list):
         self.frames = video_frames
         self.part_size = partition_size
         super().__init__()
-        partitions = super()
         counter = 0
         for i in range(0, len(self.frames), partition_size):
-            partitions.append(Partition(counter, (f for f in self.frames[i:i + partition_size]), i, i+partition_size-1))
+            self.append(Partition(counter, (f for f in self.frames[i:i + partition_size]), i, i+partition_size-1))
             counter += 1
 
     def build_hash_index(self):
-        for portion in super():
+        for portion in self:
             portion.build_fast_index()
 
-    def build_label_index(self, indexed_labels, obj_labels):
-        for portion in super():
+    def build_labels_index(self, indexed_labels, obj_labels):
+        for portion in self:
             portion.build_label_index(indexed_labels, obj_labels)
 
 
@@ -130,13 +129,12 @@ class Group(list):
 
     def estimate_score(self, reset=False):
         if reset or self.est_score is None:
-            partitions = super()
             windows_max_score = []
-            for i in range(0, len(partitions)-self.w_size, self.w_size):
+            for i in range(0, len(self)-self.w_size, self.w_size):
                 # FIXME(lu): not max_score, but max estimate score (according to the paper),
                 #  which take condition into consideration
                 #  albeit, maybe it is the right way to just return max_score
-                windows_max_score.append(sum(map(lambda p: p.max_score(), (p for p in partitions[i:i+self.w_size]))))
+                windows_max_score.append(sum(map(lambda p: p.max_score(), (p for p in self[i:i+self.w_size]))))
             self.est_score = max(windows_max_score)
 
         return self.est_score
@@ -148,13 +146,12 @@ class Group(list):
         :param obj_id:
         :return: generator of desiderata: tuple of (obj_ids, interval)
         """
-        for part in super():
+        for part in self:
             if part.id != exclude_partition:
                 yield (obj for obj in part.get(obj_id) if obj is not None)
 
     def interval(self):
-        partitions = super()
-        return partitions[0].interval()[0], partitions[-1].interval()[-1]
+        return self[0].interval()[0], self[-1].interval()[-1]
 
     def __lt__(self, other):
         """
@@ -183,14 +180,13 @@ class PartitionGroup(list):
         minimal_size = floor((window_size - 1) / partition_size)
         self.size = group_len if group_len > minimal_size else minimal_size
         super().__init__()
-        groups = super()
         counter = 0
         # the stride is (pg -upper_bound + 1), which is also # of distinct windows a group encloses
         # Therefore, the whole groups list guarantees that all windows will be covered
         for i in range(0, len(self.Vparts), self.size - minimal_size + 1):
-            groups.append(Group(counter, self.Vparts[i:i + self.size], window_size))
+            self.append(Group(counter, self.Vparts[i:i + self.size], window_size))
         # 2. build priority_queue
-        heapq.heapify(groups)
+        heapq.heapify(self)
 
     def max_score(self):
-        return super()[0].estimate_score()
+        return self[0].estimate_score()
