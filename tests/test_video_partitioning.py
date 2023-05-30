@@ -7,7 +7,7 @@ class TestPartition:
         frames = Dr().frame_list(False)
         part = Partition(1, frames, 0, 7)
         part.build_fast_index()
-        fake_indexed_labels = set("car")
-        fake_obj_labels = {i: "car" for i in range(1, 5)}
+        fake_indexed_labels = {"car"}
+        fake_obj_labels = {i: {"car"} for i in range(1, 5)}
         part.build_labels_index(fake_indexed_labels, fake_obj_labels)
         print(part)
